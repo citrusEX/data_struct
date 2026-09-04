@@ -1,0 +1,18 @@
+﻿# 编译产物
+*.exe
+*.o
+*.obj
+*.out
+*.ilk
+*.pdb
+
+# 编辑器 / 系统文件
+.vscode/
+.idea/
+*.user
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# 临时文件
+*~
