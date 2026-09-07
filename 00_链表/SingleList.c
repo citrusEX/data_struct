@@ -1,4 +1,6 @@
-﻿#include <stdio.h>
+﻿#define ENABLE_SELF_TEST 1
+
+#include <stdio.h>
 #include <stdlib.h>
 
 /*-----------结构体定义-------------*/
@@ -68,7 +70,7 @@ LinkList CreateByTail(int a[], int n){
 }
 
 /* 工具：用头插法把数组 a 的前 n 个元素建成链表（结果是逆序） */
-LinkList CreatebyHead(int a[], int n){
+LinkList CreateByHead(int a[], int n){
     LinkList L;
     int i;
 
@@ -83,7 +85,7 @@ LinkList CreatebyHead(int a[], int n){
 void PrintList(LinkList L){
     LNode *p = L->next;
 
-    while(p->next != NULL){
+    while(p != NULL){
         printf("%d -> ",p->data);
         p = p->next;
     }
@@ -180,7 +182,158 @@ int ListDelete(LinkList L, int i, int *e){
 void Reverse(LinkList L){
     LNode *pre = NULL;
     LNode *cur = L->next;
-    LNode * nxt;
+    LNode *nxt;
 
-    
+    while(cur != NULL){
+        nxt = cur->next;    /* ① 先记住下一个 */
+        cur->next = pre;    /* ② 当前结点指向前驱 */
+        pre = cur;          /* ③ pre 前移 */
+        cur = nxt;          /* ④ cur 前移 */
+    }
+    L->next = pre;          /* 头结点指向新的第一个结点 */
 }
+
+/* ---------- 9. 清空 / 销毁 ---------- */
+
+/* 清空：释放所有数据结点，保留头结点（链表还能继续用） */
+void ClearList(LinkList L){
+    LNode *p = L->next;
+    LNode *q;
+
+    while(p != NULL){
+        q = p->next;
+        free(p);
+        p = q;
+    }
+    L->next = NULL;
+}
+
+/* 销毁：连头结点一起释放，并把外面的头指针置 NULL */
+void DestroyList(LinkList *L){
+    ClearList(*L);
+    free(*L);
+    *L = NULL;
+}
+
+/* ---------- 自测工具 ---------- */
+static int tests = 0, passed = 0;
+
+void check(int cond , const char *msg){
+    tests++;
+    if(cond){
+        passed++;
+        printf("[PASS] %s\n",msg);
+    }else{
+        printf("[FAIL] %s\n",msg);
+    }
+}
+
+/* ---------- 主函数：逐项自测 ---------- */
+#if ENABLE_SELF_TEST
+
+int main(void){
+    /* L 尾插表 / M 头插表 / E 空表演练 / S 单结点 / F 空表 */
+    LinkList L, M, E, S, F;
+    int a[] = {1,2,3,4,5};
+    int e;
+
+    /* ===== 1. 空表测试 ===== */
+    printf("--- 1. 空表测试 ---\n");
+    InitList(&E);
+    check(Length(E) == 0, "空表长度为 0");
+    PrintList(E);
+    check(GetElem(E,1) == NULL, "空表按位查找返回 NULL");
+    check(LocateElem(E, 5) == NULL, "空表按值查找返回 NULL");
+    check(ListDelete(E, 1, &e) == 0, "空表删除返回失败");
+    check(ListInsert(E, 1, 7) == 1, "空表在第 1 位插入成功");
+    PrintList(E);   /* 期望: 7 -> NULL */
+    check(ListInsert(E, 1, 8) == 1, "空表插入后再在表头插入成功");
+    PrintList(E);   /* 期望: 8 -> 7 -> NULL */
+
+    /* ===== 2. 尾插法建表（保持顺序） ===== */
+    printf("\n--- 2. 尾插法建表 ---\n");
+    L = CreateByTail(a, 5);
+    PrintList(L);                                  /* 期望: 1 -> 2 -> 3 -> 4 -> 5 -> NULL */
+    check(Length(L) == 5, "尾插法建表长度为 5");
+
+    /* ===== 3. 头插法建表（结果逆序） ===== */
+    printf("\n--- 3. 头插法建表 ---\n");
+    M = CreateByHead(a, 5);
+    PrintList(M);                                  /* 期望: 5 -> 4 -> 3 -> 2 -> 1 -> NULL */
+    check(Length(M) == 5, "头插法建表长度为 5");
+    check(GetElem(M, 1)->data == 5, "头插法第 1 个元素是 5（逆序验证）");
+
+    /* ===== 4. 查找测试（L = 1 2 3 4 5） ===== */
+    printf("\n--- 4. 查找测试 ---\n");
+    check(GetElem(L, 1)->data == 1, "按位查找表头第 1 个元素为 1");
+    check(GetElem(L, 3)->data == 3, "按位查找中间第 3 个元素为 3");
+    check(GetElem(L, 5)->data == 5, "按位查找表尾第 5 个元素为 5");
+    check(GetElem(L, 0) == NULL, "按位查找 i=0 返回 NULL");
+    check(GetElem(L, 6) == NULL, "按位查找越界(i=6)返回 NULL");
+    check(LocateElem(L, 4) != NULL, "按值查找 4 成功");
+    check(LocateElem(L, 99) == NULL, "按值查找不存在的 99 返回 NULL");
+
+    /* ===== 5. 插入测试（表头 / 中间 / 表尾 / 越界） ===== */
+    printf("\n--- 5. 插入测试 ---\n");
+    check(ListInsert(L, 3, 99) == 1, "中间第 3 位插入 99 成功");
+    PrintList(L);                                  /* 期望: 1 -> 2 -> 99 -> 3 -> 4 -> 5 */
+    check(ListInsert(L, 1, 100) == 1, "表头第 1 位插入 100 成功");
+    PrintList(L);                                  /* 期望: 100 -> 1 -> 2 -> 99 -> 3 -> 4 -> 5 */
+    check(ListInsert(L, Length(L) + 1, 200) == 1, "表尾(第 len+1 位)插入 200 成功");
+    PrintList(L);                                  /* 期望: 100 -> 1 -> 2 -> 99 -> 3 -> 4 -> 5 -> 200 */
+    check(ListInsert(L, 0, 0) == 0, "i=0 插入失败");
+    check(ListInsert(L, Length(L) + 2, 0) == 0, "i 超过 len+1 插入失败");
+
+    /* ===== 6. 删除测试（表头 / 中间 / 表尾 / 越界） ===== */
+    printf("\n--- 6. 删除测试 ---\n");
+    check(ListDelete(L, 1, &e) == 1 && e == 100, "删除表头第 1 位，带回值 100");
+    PrintList(L);                                  /* 期望: 1 -> 2 -> 99 -> 3 -> 4 -> 5 -> 200 */
+    check(ListDelete(L, 3, &e) == 1 && e == 99, "删除中间第 3 位，带回值 99");
+    PrintList(L);                                  /* 期望: 1 -> 2 -> 3 -> 4 -> 5 -> 200 */
+    check(ListDelete(L, Length(L), &e) == 1 && e == 200, "删除表尾最后一位，带回值 200");
+    PrintList(L);                                  /* 期望: 1 -> 2 -> 3 -> 4 -> 5 -> NULL */
+    check(ListDelete(L, 0, &e) == 0, "i=0 删除失败");
+    check(ListDelete(L, Length(L) + 1, &e) == 0, "i 越界删除失败");
+
+    /* ===== 7. 反转测试 ===== */
+    printf("\n--- 7. 反转测试 ---\n");
+    Reverse(L);                                    /* L = 1 2 3 4 5 */
+    PrintList(L);                                  /* 期望: 5 -> 4 -> 3 -> 2 -> 1 */
+    check(GetElem(L, 1)->data == 5 && GetElem(L, 5)->data == 1, "反转后首尾元素正确");
+    Reverse(L);
+    PrintList(L);                                  /* 期望: 1 -> 2 -> 3 -> 4 -> 5 */
+    check(GetElem(L, 1)->data == 1 && GetElem(L, 5)->data == 5, "再次反转恢复原序");
+
+    /* ===== 8. 单结点 / 空链表边界 ===== */
+    printf("\n--- 8. 单结点 / 空链表边界 ---\n");
+    S = CreateByTail(a, 1);                        /* S = 1 */
+    check(ListInsert(S, 2, 9) == 1, "单结点链表在表尾(第 2 位)插入成功");
+    PrintList(S);                                  /* 期望: 1 -> 9 -> NULL */
+    check(ListDelete(S, 1, &e) == 1 && e == 1, "删除单结点链表的表头，带回值 1");
+    PrintList(S);                                  /* 期望: 9 -> NULL */
+    Reverse(S);
+    check(GetElem(S, 1)->data == 9, "单结点链表反转后仍为 9");
+
+    InitList(&F);                                  /* 空链表 */
+    Reverse(F);                                    /* 空链表反转不应崩溃 */
+    check(Length(F) == 0, "空链表反转后长度仍为 0");
+
+    /* ===== 9. 清空 / 销毁测试 ===== */
+    printf("\n--- 9. 清空 / 销毁测试 ---\n");
+    ClearList(E);                                  /* E 之前是 8 7 */
+    check(Length(E) == 0, "清空后长度为 0");
+    check(E != NULL, "清空后头结点仍保留，链表可复用");
+    DestroyList(&E);
+    check(E == NULL, "销毁后头指针被置 NULL");
+
+    DestroyList(&L);
+    DestroyList(&M);
+    DestroyList(&S);
+    DestroyList(&F);
+
+    /* ===== 汇总 ===== */
+    printf("\n===== 测试结果：%d / %d 通过 =====\n", passed, tests);
+    return 0;
+}
+
+#endif
