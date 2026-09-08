@@ -1,4 +1,24 @@
-﻿#define ENABLE_SELF_TEST 1
+﻿/* ============================================================
+ * 文件名 : SingleList.c
+ * 功能   : 带头结点的单链表 —— 任务 00-1 全部实现 + 自测
+ * 编译   : gcc SingleList.c -o SingleList && ./SingleList
+ * 自测   : 全部输出 [PASS]，末尾显示 通过数/总数
+ * ============================================================ */
+
+/* 任务清单对照（对应 README 任务 00-1）
+ * [x] 结点定义 + InitList 初始化（带头结点）
+ * [x] HeadInsert 头插法（结果逆序）
+ * [x] TailInsert 尾插法（保持原顺序）
+ * [x] PrintList 遍历打印 / Length 求表长
+ * [x] GetElem 按位查找 / LocateElem 按值查找
+ * [x] ListInsert 在第 i 位插入元素
+ * [x] ListDelete 删除第 i 位元素（值带回）
+ * [x] Reverse 就地反转（三指针法）
+ * [x] ClearList 清空 / DestroyList 销毁（释放内存）
+ * [x] main 自测：空表 / 表头 / 表尾 / 中间 / 越界
+ */
+
+#define ENABLE_SELF_TEST 1
 
 #include <stdio.h>
 #include <stdlib.h>
