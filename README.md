@@ -31,26 +31,26 @@
 ## 00_链表（任务 00-1 ~ 00-4）
 
 ### 任务 00-1：SingleList.c —— 单链表基础
-- [ ] 结点定义 + InitList 初始化（带头结点）
-- [ ] HeadInsert 头插法（结果逆序）
-- [ ] TailInsert 尾插法（保持原顺序）
-- [ ] PrintList 遍历打印 / Length 求表长
-- [ ] GetElem 按位查找 / LocateElem 按值查找
-- [ ] ListInsert 在第 i 位插入元素
-- [ ] ListDelete 删除第 i 位元素（值带回）
-- [ ] Reverse 就地反转（三指针法）
-- [ ] ClearList 清空 / DestroyList 销毁（释放内存）
-- [ ] main 自测：覆盖空表 / 表头 / 表尾 / 中间位置
-- 状态：☐ 未开始 ｜ 完成日期：____ ｜ 备注：____
+- [√] 结点定义 + InitList 初始化（带头结点）
+- [√] HeadInsert 头插法（结果逆序）
+- [√] TailInsert 尾插法（保持原顺序）
+- [√] PrintList 遍历打印 / Length 求表长
+- [√] GetElem 按位查找 / LocateElem 按值查找
+- [√] ListInsert 在第 i 位插入元素
+- [√] ListDelete 删除第 i 位元素（值带回）
+- [√] Reverse 就地反转（三指针法）
+- [√] ClearList 清空 / DestroyList 销毁（释放内存）
+- [√] main 自测：覆盖空表 / 表头 / 表尾 / 中间位置
+- 状态：☐ 未开始 ｜ 完成日期：__2026-9-7__ ｜ 备注：____
 
 ### 任务 00-2：DoubleList.c —— 双向链表
-- [ ] DNode 定义 + InitDList 初始化
-- [ ] DHeadInsert 头插 / DTailInsert 尾插（prior 别忘改）
-- [ ] DInsertAfter 在 p 后插入（前插可转为后插）
-- [ ] DDeleteNext 删除 p 的后继
-- [ ] 正向遍历 + 反向遍历打印
-- [ ] main 自测：边界 p 是最后一个结点时插入/删除
-- 状态：☐ 未开始 ｜ 完成日期：____ ｜ 备注：____
+- [√] DNode 定义 + InitDList 初始化
+- [√] DHeadInsert 头插 / DTailInsert 尾插（prior 别忘改）
+- [√] DInsertAfter 在 p 后插入（前插可转为后插）
+- [√] DDeleteNext 删除 p 的后继
+- [√] 正向遍历 + 反向遍历打印
+- [√] main 自测：边界 p 是最后一个结点时插入/删除
+- 状态：☐ 未开始 ｜ 完成日期：__2026-9-8__ ｜ 备注：____
 
 ### 任务 00-3：CircularList.c —— 循环链表 + 约瑟夫环
 - [ ] 循环链表建表（尾结点回指首结点）
