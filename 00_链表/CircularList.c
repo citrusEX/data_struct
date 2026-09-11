@@ -173,6 +173,7 @@ int *Josephus(int n,int m){
     return order;
 }
 
+
 /* ---------- 4. 销毁 ---------- */
 void CDestroyList(LinkList *L){
     LNode *p = (*L)->next;
